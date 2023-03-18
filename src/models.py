@@ -1,6 +1,7 @@
 import os
 import sys
-from sqlalchemy import Column, ForeignKey, Integer, String
+from datetime import datetime
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
@@ -8,26 +9,95 @@ from eralchemy2 import render_er
 
 Base = declarative_base()
 
-class Person(Base):
-    __tablename__ = 'person'
+class User(Base):
+    """
+    User
+    ----
+    id int PK
+    email unique string
+    nickname string
+    password string
+    """
+    __tablename__ = "user"
     # Here we define columns for the table person
     # Notice that each column is also a normal Python instance attribute.
     id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
+    email = Column(String(256), unique=True, required=True)
+    nickname = Column(String(256))
+    phone = Column(String(16), unique=True)
+    password = Column(String(256), required=True)
+    profile_pic = Column(String(256))
 
-class Address(Base):
-    __tablename__ = 'address'
-    # Here we define columns for the table address.
-    # Notice that each column is also a normal Python instance attribute.
+class Follow(Base):
+    """
+    Follow
+    ----
+    follower_id int PK FK >- User.id
+    following_id int PK FK >- User.id
+    """
+    __tablename__ = "follow"
     id = Column(Integer, primary_key=True)
-    street_name = Column(String(250))
-    street_number = Column(String(250))
-    post_code = Column(String(250), nullable=False)
-    person_id = Column(Integer, ForeignKey('person.id'))
-    person = relationship(Person)
+    follower_id = Column(Integer, ForeignKey("user.id"))
+    following_id = Column(Integer, ForeignKey("user.id"))
 
-    def to_dict(self):
-        return {}
+class Post(Base):
+    """
+    Post
+    ----
+    id int PK
+    user_id int PK FK >- User.id
+    media string
+    description string
+    """
+    __tablename__ = "post"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    Description = Column(String(256))
+    likes = Column(Integer)
+    Comments = Column(String(256))
+    collection_id = Column(Integer, ForeignKey("collection.id"))
+    created = Column(DateTime, default=datetime.now)
+    edited = Column(DateTime, default=None, onupdate=datetime.now)
+
+class Comment(Base):
+    """
+    Comment
+    ---
+    id int PK
+    post_id int FK >- Post.id
+    user_id int FK >- User.id
+    content string
+    created datetime
+    """
+    __tablename__ = "comment"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    comment_id = Column(Integer, ForeignKey("post.id"))
+    description = Column(String(256))
+    created = Column(DateTime, default=datetime.now)
+    edited = Column(DateTime, default=None, onupdate=datetime.now)
+
+class Collection(Base):
+    """
+    Collection
+    ----
+    id int PK
+    user_id int PK FK >- User.id
+    title string
+    """
+    __tablename__ = "collection"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("user.id"))
+
+class Media(Base):
+     __tablename__ = "media"
+     id = Column(Integer, primary_key=True)
+     url = Column(String(256))
+     post_id = Column(Integer, ForeignKey("post.id"))
+
+
+
+
 
 ## Draw from SQLAlchemy base
 try:
