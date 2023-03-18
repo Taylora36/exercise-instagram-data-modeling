@@ -26,7 +26,7 @@ class User(Base):
     nickname = Column(String(256))
     phone = Column(String(16), unique=True)
     password = Column(String(256), required=True)
-    profile_pic = Column(String(256))
+    profilepic = Column(String(256))
 
 class Follow(Base):
     """
@@ -52,9 +52,9 @@ class Post(Base):
     __tablename__ = "post"
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("user.id"))
-    Description = Column(String(256))
+    description = Column(String(256))
     likes = Column(Integer)
-    Comments = Column(String(256))
+    comments = Column(String(256))
     collection_id = Column(Integer, ForeignKey("collection.id"))
     created = Column(DateTime, default=datetime.now)
     edited = Column(DateTime, default=None, onupdate=datetime.now)
@@ -72,7 +72,7 @@ class Comment(Base):
     __tablename__ = "comment"
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("user.id"))
-    comment_id = Column(Integer, ForeignKey("post.id"))
+    post_id = Column(Integer, ForeignKey("post.id"))
     description = Column(String(256))
     created = Column(DateTime, default=datetime.now)
     edited = Column(DateTime, default=None, onupdate=datetime.now)
