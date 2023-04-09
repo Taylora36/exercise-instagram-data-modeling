@@ -22,10 +22,10 @@ class User(Base):
     # Here we define columns for the table person
     # Notice that each column is also a normal Python instance attribute.
     id = Column(Integer, primary_key=True)
-    email = Column(String(256), unique=True, required=True)
+    email = Column(String(256), unique=True, nullable=False)
     nickname = Column(String(256))
     phone = Column(String(16), unique=True)
-    password = Column(String(256), required=True)
+    password = Column(String(256), nullable=False)
     profilepic = Column(String(256))
 
 class Follow(Base):
